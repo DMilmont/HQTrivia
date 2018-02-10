@@ -1,0 +1,61 @@
+---
+title: "HQStudio Analysis"
+output: html_notebook
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readr)
+library(Amelia)
+
+```
+
+
+```{r, message=FALSE}
+HQ_df <- read_csv("~/Downloads/HQ Trivia Data Master Jan 3.csv - HQ Trivia Data Master Jan 3.csv.csv")
+
+```
+
+```{r}
+#how many games? 
+#distribution of prize money? 
+#are the questions getting harder? 
+#is there evidence bots are playing? 
+#how often does the game start on time> - look at delay time 
+#which answer is most often correct? If you were to guess what is the best letter to guess? 
+
+summary(HQ_df) #initial summary shows a lot of Na's
+missmap(HQ_df)
+HQ_df <- HQ_df[complete.cases(HQ_df$game_id),]
+missmap(HQ_df) #fixed
+
+data <- HQ_df %>% select(-X41, -comments) #making final good df for analysis
+
+#fixing formatting 
+data <- data %>% mutate(
+  date = lubridate::mdy(date),
+  day_of_week = as.factor(day_of_week),
+  take_home_pay = as.double(gsub("\\$","",take_home_pay)),
+  category = as.factor(category),
+  quiz_length_rank = as.numeric(quiz_length_rank)
+)
+
+#amount of winners over time
+data %>% ggplot(aes(x=date,y=winners)) + geom_line() + geom_smooth()
+
+#amount of take home pay over time 
+data %>% ggplot(aes(x=date,y=take_home_pay)) + geom_line() + geom_smooth()
+
+#hist of winnings
+data %>% ggplot(aes(take_home_pay)) + geom_histogram(binwidth = 100)
+
+#hist of players in a game
+data %>% ggplot(aes(attendance)) + geom_histogram(binwidth = 100000)
+
+#amount of take home pay over time 
+data %>% 
+  ggplot(aes(x=date,y=delay_time)) + geom_line() + scale_y_continuous(limits = c(0,50)) + geom_smooth()
+
+```
+
