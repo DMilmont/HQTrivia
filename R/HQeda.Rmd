@@ -51,7 +51,8 @@ data %>% ggplot(aes(x=date,y=take_home_pay)) + geom_line() + geom_smooth()
 data %>% ggplot(aes(take_home_pay)) + geom_histogram(binwidth = 100)
 
 #hist of players in a game
-data %>% ggplot(aes(attendance)) + geom_histogram(binwidth = 100000)
+data %>% ggplot(aes(attendance)) + geom_histogram
+data %>% ggplot(aes(attendance, color = day_of_week)) + geom_density() + scale_x_continuous(limits = c(0,1000000))
 
 #amount of take home pay over time 
 data %>% 
