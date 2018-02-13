@@ -32,6 +32,11 @@ missmap(HQ_df) #fixed
 
 data <- HQ_df %>% select(-X41, -comments) #making final good df for analysis
 
+groupedData <- data %>% group_by(day_of_week) %>% 
+  summarise(
+    date = date
+  )
+
 #fixing formatting 
 data <- data %>% mutate(
   date = lubridate::mdy(date),
@@ -49,6 +54,9 @@ data %>% ggplot(aes(x=date,y=take_home_pay)) + geom_line() + geom_smooth()
 
 #hist of winnings
 data %>% ggplot(aes(take_home_pay)) + geom_histogram(binwidth = 100)
+data %>% ggplot(aes(take_home_pay)) + geom_density()
+data %>% ggplot(aes(take_home_pay,day_of_week)) + 
+  geom_violin() + geom_jitter()
 
 #hist of players in a game
 data %>% ggplot(aes(attendance)) + geom_histogram
